@@ -1,0 +1,105 @@
+﻿@page "/test-components"
+@using SharedComponents.Components.Forms
+@using System.Globalization
+@using System.ComponentModel.DataAnnotations
+
+<h3 class="text-2xl font-bold mb-4">📝 تست همه کامپوننت‌های فرم</h3>
+
+
+<div class="@CurrentTheme p-4" style="max-width:400px; margin:20px; padding:20px; border:1px solid #ccc; border-radius:8px;" dir="@dir">
+    <div style="padding:0.75rem;">
+        <label>انتخاب جهت:</label>
+        <select @bind="dir" class="form-select" style="width: 150px; margin-bottom: 1rem;">
+            <option value="ltr">چپ به راست (LTR)</option>
+            <option value="rtl">راست به چپ (RTL)</option>
+        </select>
+    </div>
+    <div style="padding:0.75rem;">
+        <label>انتخاب Theme:</label>
+        <select @onchange="ChangeTheme" class="form-select mb-3">
+            <option value="theme-light">Light</option>
+            <option value="theme-dark">Dark</option>
+            <option value="theme-corporate">Corporate</option>
+            <option value="theme-classic">Classic</option>
+            <option value="theme-modern">Modern</option>
+        </select>
+    </div>
+<EditForm Model="@formData" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+        <div style="width:300px;" >
+            <InputTextBox @bind-Value="formData.Name" Label="نام" Placeholder="نام خود را وارد کنید" FullWidth="true" Required
+                          SuffixIcon="icon-lock" PrefixIcon="icon-check" StyleMode="Box"/>
+            <InputTextBox @bind-Value="formData.UserName"
+                          Label="نام کاربری"
+                          Placeholder="نام کاربری را وارد کنید"
+                          MaxLength="50"
+                          FullWidth="true"
+                          SuffixIcon="icon-lock"
+                          Required 
+                          ShowValidationMessage="true" />
+            <InputPasswordBox @bind-Value="formData.Password" Label="رمز عبور" Placeholder="رمز خود را وارد کنید" FullWidth="true" Required
+                              StyleMode="Line" SecondTitle="رمز عبور را فراموش کردید؟"
+                              SecondLink="/forgot-password" />
+            <InputPhoneNumberBox @bind-Value="formData.PhoneNumber" Label="شماره تلفن" Placeholder="شماره تلفن خود را وارد کنید" FullWidth="true" Required
+                                 StyleMode="Line" MinLength="6" />
+            <InputNumberBox @bind-Value="formData.Age" Label="سن" Placeholder="سن خود را وارد کنید" FullWidth="true" Required
+                            StyleMode="Line" Min="1" Max="120" />
+            <InputCurrencyBox @bind-Value="formData.Salary" Label="حقوق" Placeholder="حقوق خود را وارد کنید" FullWidth="true" Required
+                                StyleMode="Line" Min="0" Max="1000000" PrefixIcon="icon-rials"/>
+            <InputTimeBox @bind-Value="formData.AppointmentTime" Label="زمان ملاقات" Placeholder="زمان ملاقات خود را وارد کنید" FullWidth="true" Required
+                          StyleMode="Line" />
+            <InputDateBox @bind-Value="formData.BirthDate" Label="تاریخ تولد" Placeholder="تاریخ تولد خود را وارد کنید" FullWidth="true" Required
+                          StyleMode="Box" />
+            <InputDateBox2 @bind-Value="date" Label="تاریخ تولد" FullWidth="true" Required StyleMode="Box" />
+        </div>
+    <button type="submit" class="mt-4 px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">ارسال فرم</button>
+</EditForm>
+</div>
+
+@code {
+    private FormData formData = new();
+
+    private string CurrentTheme { get; set; } = "theme-light";
+    private string dir = "ltr";
+
+    private void ChangeTheme(ChangeEventArgs e)
+    {
+        CurrentTheme = e.Value?.ToString() ?? "theme-light";
+    }
+
+    private void HandleValidSubmit()
+    {
+        Console.WriteLine("Ok!");
+    }
+
+    private string? date;
+    private List<string> persianMonths = new()
+    {
+        "فروردین", "اردیبهشت", "خرداد",
+        "تیر", "مرداد", "شهریور",
+        "مهر", "آبان", "آذر",
+        "دی", "بهمن", "اسفند"
+    };
+
+    public class FormData
+    {
+        [Required(ErrorMessage = "وارد کردن نام کاربری الزامی است.")]
+        public string? Name { get; set; }
+        [Required(ErrorMessage = "وارد کردن نام کاربری الزامی است.")]
+        public string? UserName { get; set; }
+        [Required(ErrorMessage = "وارد کردن رمز الزامی است.")]
+        public string? Password { get; set; }
+        public int? Age { get; set; }
+        public decimal? Salary { get; set; }
+        public string? Description { get; set; }
+        public DateTime? BirthDate { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Email { get; set; }
+        public TimeSpan? AppointmentTime { get; set; }
+        public string? Gender { get; set; }
+        public bool IsActive { get; set; }
+        public List<string> Interests { get; set; } = new();
+        public string SelectedWeekDays { get; set; }
+    }
+}

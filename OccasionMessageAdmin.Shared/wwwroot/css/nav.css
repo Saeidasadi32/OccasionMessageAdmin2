@@ -1,0 +1,57 @@
+﻿.nav-menu {
+    background-color: #333;
+    padding: 1rem;
+    position: relative;
+}
+
+    .nav-menu ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+    }
+
+    .nav-menu a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.3rem;
+    }
+
+        .nav-menu a:hover {
+            background-color: #555;
+        }
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* موبایل */
+@media (max-width: 768px) {
+    .nav-menu ul {
+        flex-direction: column;
+        gap: 0.5rem;
+        position: absolute;
+        top: 3.5rem;
+        left: 0;
+        width: 100%;
+        background-color: #333;
+        padding: 1rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .nav-menu ul.hide-menu {
+        display: none;
+    }
+}

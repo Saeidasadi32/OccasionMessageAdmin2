@@ -1,0 +1,20 @@
+﻿@code {
+    private bool isMenuOpen = false;
+
+    private void ToggleMenu()
+    {
+        isMenuOpen = !isMenuOpen;
+    }
+}
+
+<nav class="nav-menu">
+    <button class="menu-toggle" @onclick="ToggleMenu">☰</button>
+
+    <ul class="@(!isMenuOpen ? "hide-menu" : "")">
+        <li><a href="/">🏠 Home</a></li>
+        <li><a href="/auth/login">🔐 Login</a></li>
+        <li><a href="/auth/register">📝 Register</a></li>
+        <li><a href="/messages">✉️ Messages</a></li>
+        <li><a href="/test-components">تست فرم</a></li>
+    </ul>
+</nav>

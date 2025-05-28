@@ -1,0 +1,40 @@
+﻿@page "/auth/login"
+@using System.ComponentModel.DataAnnotations
+
+<div class="auth-form">
+    <h3>ورود</h3>
+
+    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator />
+
+        <label>ایمیل</label>
+        <InputText @bind-Value="loginModel.Email" />
+        <ValidationMessage For="@(() => loginModel.Email)" />
+
+        <label>رمز عبور</label>
+        <InputText @bind-Value="loginModel.Password" type="password" />
+        <ValidationMessage For="@(() => loginModel.Password)" />
+
+        <button type="submit">ورود</button>
+    </EditForm>
+</div>
+
+@code {
+    private LoginModel loginModel = new();
+
+    private void HandleLogin()
+    {
+        // اینجا میشه API call زد
+        Console.WriteLine($"Email: {loginModel.Email}, Password: {loginModel.Password}");
+    }
+
+    public class LoginModel
+    {
+        [Required(ErrorMessage = "ایمیل را وارد کنید")]
+        [EmailAddress(ErrorMessage = "ایمیل معتبر نیست")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "رمز عبور را وارد کنید")]
+        public string Password { get; set; } = string.Empty;
+    }
+}

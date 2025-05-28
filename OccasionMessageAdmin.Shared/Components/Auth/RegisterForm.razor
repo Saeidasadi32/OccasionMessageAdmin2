@@ -1,0 +1,48 @@
+﻿@page "/auth/register"
+@using System.ComponentModel.DataAnnotations
+
+<div class="auth-form">
+    <h3>ثبت نام</h3>
+
+    <EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
+        <DataAnnotationsValidator />
+
+        <label>ایمیل</label>
+        <InputText @bind-Value="registerModel.Email" />
+        <ValidationMessage For="@(() => registerModel.Email)" />
+
+        <label>رمز عبور</label>
+        <InputText @bind-Value="registerModel.Password" type="password" />
+        <ValidationMessage For="@(() => registerModel.Password)" />
+
+        <label>تکرار رمز عبور</label>
+        <InputText @bind-Value="registerModel.ConfirmPassword" type="password" />
+        <ValidationMessage For="@(() => registerModel.ConfirmPassword)" />
+
+        <button type="submit">ثبت نام</button>
+    </EditForm>
+</div>
+
+@code {
+    private RegisterModel registerModel = new();
+
+    private void HandleRegister()
+    {
+        // اینجا میشه API call زد
+        Console.WriteLine($"Email: {registerModel.Email}");
+    }
+
+    public class RegisterModel
+    {
+        [Required(ErrorMessage = "ایمیل را وارد کنید")]
+        [EmailAddress(ErrorMessage = "ایمیل معتبر نیست")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "رمز عبور را وارد کنید")]
+        public string Password { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "تکرار رمز عبور را وارد کنید")]
+        [Compare(nameof(Password), ErrorMessage = "رمزها یکسان نیستند")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+}
