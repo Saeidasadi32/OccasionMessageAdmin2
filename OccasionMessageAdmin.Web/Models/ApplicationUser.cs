@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OccasionMessageAdmin.Web.Models;
 
-public class ApplicationUser : IdentityUser<Guid>
+public class ApplicationUser : IdentityUser
 {
     public Guid RefId { get; set; }
     [StringLength(256)]

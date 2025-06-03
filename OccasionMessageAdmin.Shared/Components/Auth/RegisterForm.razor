@@ -1,5 +1,6 @@
 ﻿@page "/auth/register"
 @using System.ComponentModel.DataAnnotations
+@using SharedComponents.Components.Forms
 
 <div class="auth-form">
     <h3>ثبت نام</h3>
@@ -7,17 +8,9 @@
     <EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
         <DataAnnotationsValidator />
 
-        <label>ایمیل</label>
-        <InputText @bind-Value="registerModel.Email" />
-        <ValidationMessage For="@(() => registerModel.Email)" />
-
-        <label>رمز عبور</label>
-        <InputText @bind-Value="registerModel.Password" type="password" />
-        <ValidationMessage For="@(() => registerModel.Password)" />
-
-        <label>تکرار رمز عبور</label>
-        <InputText @bind-Value="registerModel.ConfirmPassword" type="password" />
-        <ValidationMessage For="@(() => registerModel.ConfirmPassword)" />
+        <InputEmailBox @bind-Value="registerModel.Email" Label="پست الکترونیک" Placeholder="آدرس ایمیل خود را وارد کنید" FullWidth="true" Required />
+        <InputPasswordBox @bind-Value="registerModel.Password" Label="رمز عبور" Placeholder="رمز خود را وارد کنید" FullWidth="true" Required/>
+        <InputPasswordBox @bind-Value="registerModel.ConfirmPassword" Label="تکرار رمز عبور" Placeholder="رمز خود را دوباره وارد کنید" FullWidth="true" Required/>
 
         <button type="submit">ثبت نام</button>
     </EditForm>

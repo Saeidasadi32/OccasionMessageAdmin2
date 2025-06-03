@@ -1,5 +1,6 @@
 ﻿@page "/auth/login"
 @using System.ComponentModel.DataAnnotations
+@using SharedComponents.Components.Forms
 
 <div class="auth-form">
     <h3>ورود</h3>
@@ -7,13 +8,9 @@
     <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
         <DataAnnotationsValidator />
 
-        <label>ایمیل</label>
-        <InputText @bind-Value="loginModel.Email" />
-        <ValidationMessage For="@(() => loginModel.Email)" />
-
-        <label>رمز عبور</label>
-        <InputText @bind-Value="loginModel.Password" type="password" />
-        <ValidationMessage For="@(() => loginModel.Password)" />
+        <InputEmailBox @bind-Value="loginModel.Email" Label="پست الکترونیک" Placeholder="آدرس ایمیل خود را وارد کنید" FullWidth="true" Required />
+        <InputPasswordBox @bind-Value="loginModel.Password" Label="رمز عبور" Placeholder="رمز خود را وارد کنید" FullWidth="true" Required
+                              StyleMode="Line" SecondTitle="رمز عبور را فراموش کردید؟"/>
 
         <button type="submit">ورود</button>
     </EditForm>

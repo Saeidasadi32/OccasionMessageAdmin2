@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using OccasionMessageAdmin.Web.Components;
 using OccasionMessageAdmin.Web.Config;
@@ -17,11 +18,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
-
-builder.Services.AddHttpClient("SharedComponents", client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["BaseAddress"] ?? "https://localhost:5001/");
-});
 
 var detailedErrors = builder.Configuration.GetValue<bool>("Blazor:DetailedErrors");
 builder.Services.AddServerSideBlazor(options =>
@@ -56,26 +52,27 @@ if (jwtSettings == null || !jwtSettings.IsValid())
 }
 builder.Services.AddSingleton(jwtSettings);
 
-// JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = false,
-            ValidateAudience = false,
+            ValidateIssuer = true,
+            ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+            ValidIssuer = jwtSettings.Issuer,
+            ValidAudience = jwtSettings.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+            ClockSkew = TimeSpan.Zero
         };
-        options.RequireHttpsMetadata = false; // برای dev
+        options.RequireHttpsMetadata = false; // فقط در dev
     });
 
 builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
-
-builder.Services.AddScoped<IPhoneNumberService, PhoneNumberService>();
+builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
 var app = builder.Build();
 

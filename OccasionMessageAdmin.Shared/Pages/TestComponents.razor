@@ -38,20 +38,22 @@
                           SuffixIcon="icon-lock"
                           Required 
                           ShowValidationMessage="true" />
-            <InputPasswordBox @bind-Value="formData.Password" Label="رمز عبور" Placeholder="رمز خود را وارد کنید" FullWidth="true" Required
+             <InputPasswordBox @bind-Value="formData.Password" Label="رمز عبور" Placeholder="رمز خود را وارد کنید" FullWidth="true" Required
                               StyleMode="Line" SecondTitle="رمز عبور را فراموش کردید؟"
                               SecondLink="/forgot-password" />
+            <InputNumberBox @bind-Value="formData.Age" Label="سن" Placeholder="سن خود را وارد کنید" FullWidth="true" Required
+                            StyleMode="Line" MinValue="1" MaxValue="120" />
+            <InputNumberBox @bind-Value="formData.Height" Label="قد" Placeholder="قد خود را وارد کنید" FullWidth="true" Required
+                            StyleMode="Line" MinValue="100" MaxValue="300" />
+             <InputCurrencyBox @bind-Value="formData.Salary" Label="حقوق" Placeholder="حقوق خود را وارد کنید" FullWidth="true" Required
+                                StyleMode="Line" MinValue="1" MaxValue="1000000" PrefixIcon="icon-rials"/>
             <InputPhoneNumberBox @bind-Value="formData.PhoneNumber" Label="شماره تلفن" Placeholder="شماره تلفن خود را وارد کنید" FullWidth="true" Required
                                  StyleMode="Line" MinLength="6" />
-            <InputNumberBox @bind-Value="formData.Age" Label="سن" Placeholder="سن خود را وارد کنید" FullWidth="true" Required
-                            StyleMode="Line" Min="1" Max="120" />
-            <InputCurrencyBox @bind-Value="formData.Salary" Label="حقوق" Placeholder="حقوق خود را وارد کنید" FullWidth="true" Required
-                                StyleMode="Line" Min="0" Max="1000000" PrefixIcon="icon-rials"/>
+            <InputEmailBox @bind-Value="formData.Email" Label="پست الکترونیک" Placeholder="آدرس ایمیل خود را وارد کنید" FullWidth="true" Required />
             <InputTimeBox @bind-Value="formData.AppointmentTime" Label="زمان ملاقات" Placeholder="زمان ملاقات خود را وارد کنید" FullWidth="true" Required
                           StyleMode="Line" />
-            <InputDateBox @bind-Value="formData.BirthDate" Label="تاریخ تولد" Placeholder="تاریخ تولد خود را وارد کنید" FullWidth="true" Required
-                          StyleMode="Box" />
-            <InputDateBox2 @bind-Value="date" Label="تاریخ تولد" FullWidth="true" Required StyleMode="Box" />
+             <InputDateBox @bind-Value="formData.BirthDate" Label="تاریخ تولد" Placeholder="تاریخ تولد خود را وارد کنید" FullWidth="true" Required
+                          StyleMode="Line" />
         </div>
     <button type="submit" class="mt-4 px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700">ارسال فرم</button>
 </EditForm>
@@ -91,6 +93,7 @@
         [Required(ErrorMessage = "وارد کردن رمز الزامی است.")]
         public string? Password { get; set; }
         public int? Age { get; set; }
+        public float? Height { get; set; }
         public decimal? Salary { get; set; }
         public string? Description { get; set; }
         public DateTime? BirthDate { get; set; }

@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using OccasionMessageAdmin.Shared.Models.Auth;
 using OccasionMessageAdmin.Web.Config;
+using OccasionMessageAdmin.Web.Helper;
 using OccasionMessageAdmin.Web.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -40,20 +41,22 @@ public class AuthService(UserManager<ApplicationUser> userManager, JwtSettings j
         return new AuthResponse { IsSuccess = true, Token = token };
     }
 
-    private async Task<string> GenerateJwtToken(ApplicationUser user)
+    public async Task<string> GenerateJwtToken(ApplicationUser user)
     {
-        var claims = new List<Claim>
-{
-    new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-    new(JwtRegisteredClaimNames.UniqueName, user.Email),
-    new("FirstName", user.FirstName ?? ""),
-    new("LastName", user.LastName ?? ""),
-    new("LanguageCode", user.LanguageCode ?? ""),
-    new("RefId", user.RefId.ToString())
-};
+        var now = DateTime.UtcNow;
 
-        // اضافه کردن نقش‌ها
-        var roles =await _userManager.GetRolesAsync(user);
+        var claims = new List<Claim>
+        {
+            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new(JwtRegisteredClaimNames.UniqueName, user.Email),
+            new("FirstName", user.FirstName ?? ""),
+            new("LastName", user.LastName ?? ""),
+            new("LanguageCode", user.LanguageCode ?? ""),
+            new("RefId", user.RefId.ToString()),
+            new(JwtRegisteredClaimNames.Iat, new DateTimeOffset(now).ToUnixTimeSeconds().ToString())
+        };
+
+        var roles = await _userManager.GetRolesAsync(user);
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
@@ -63,10 +66,11 @@ public class AuthService(UserManager<ApplicationUser> userManager, JwtSettings j
             issuer: _jwtSettings.Issuer,
             audience: _jwtSettings.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(_jwtSettings.ExpireMinutes),
+            expires: now.AddMinutes(_jwtSettings.ExpireMinutes),
             signingCredentials: creds);
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        var encryptedToken = AesEncryptionHelper.Encrypt(tokenString, _jwtSettings.Key);
+        return encryptedToken;
     }
-
 }
