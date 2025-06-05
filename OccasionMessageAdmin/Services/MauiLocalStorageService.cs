@@ -1,5 +1,5 @@
 ﻿
-using OccasionMessageAdmin.Shared.Services;
+using OccasionMessageAdmin.Shared.Interfaces;
 using System.Text.Json;
 
 namespace OccasionMessageAdmin.Services;

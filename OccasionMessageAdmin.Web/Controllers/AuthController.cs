@@ -38,21 +38,8 @@ public class AuthController(IAuthService authService, IRefreshTokenService refre
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh([FromBody] RefreshRequest model)
     {
-        var tokenIsValid = await _refreshTokenService.ValidateAsync(model.RefreshToken);
-        if (!tokenIsValid)
-            return Unauthorized("Invalid or expired refresh token");
-
-        var existingToken = await _db.RefreshTokens.Include(x => x.UserId).FirstOrDefaultAsync(x => x.Token == model.RefreshToken);
-        if (existingToken == null)
-            return Unauthorized("Invalid refresh token");
-
-        var user = await _db.Users.FindAsync(existingToken.UserId);
-
-        var newJwt = await authService.GenerateJwtToken(user!);
-        var newRefresh = await _refreshTokenService.GenerateAsync(user!);
-
-        await _refreshTokenService.RevokeAsync(model.RefreshToken);
-
-        return Ok(new { Token = newJwt, RefreshToken = newRefresh.Token });
+        var result = await _authService.RefreshTokenAsync(model.RefreshToken);
+        return result.IsSuccess ? Ok(result) : Unauthorized(result.Errors);
     }
+
 }

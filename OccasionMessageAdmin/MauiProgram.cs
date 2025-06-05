@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using OccasionMessageAdmin.Services;
+using OccasionMessageAdmin.Shared.Interfaces;
 using OccasionMessageAdmin.Shared.Services;
 using SharedComponents.Extensions;
 using SharedComponents.Services;
@@ -26,6 +27,14 @@ namespace OccasionMessageAdmin
             builder.Services.AddNavigationService();
             builder.Services.AddNotificationService();
             builder.Services.AddSharedComponents();
+            builder.Services.AddSingleton<ITokenStorageService, TokenStorageService>();
+            builder.Services.AddSingleton<AuthClientService>();
+            builder.Services.AddSingleton<AuthHttpMessageHandler>();
+            builder.Services.AddHttpClient("AuthHttpClient")
+                .AddHttpMessageHandler<AuthHttpMessageHandler>();
+
+            builder.Services.AddSingleton(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("AuthHttpClient"));
+
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

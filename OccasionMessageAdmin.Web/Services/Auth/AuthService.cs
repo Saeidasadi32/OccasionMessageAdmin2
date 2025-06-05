@@ -10,35 +10,49 @@ using System.Text;
 
 namespace OccasionMessageAdmin.Web.Services.Auth;
 
-public class AuthService(UserManager<ApplicationUser> userManager, JwtSettings jwtSettings) : IAuthService
+public class AuthService(UserManager<ApplicationUser> userManager, JwtSettings jwtSettings, IRefreshTokenService refreshTokenService) : IAuthService
 {
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly JwtSettings _jwtSettings = jwtSettings;
+    private readonly IRefreshTokenService _refreshTokenService = refreshTokenService;
 
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
     {
-        var user = new ApplicationUser { Email = request.Email };
+        var user = new ApplicationUser { UserName = request.Email, Email = request.Email };
         var result = await _userManager.CreateAsync(user, request.Password);
 
         if (!result.Succeeded)
         {
             return new AuthResponse { IsSuccess = false, Errors = result.Errors.Select(e => e.Description) };
         }
+        var token = await GenerateJwtToken(user);
+        var refreshToken = await _refreshTokenService.CreateAsync(user.Id);
 
-        var token =await GenerateJwtToken(user);
-        return new AuthResponse { IsSuccess = true, Token = token };
+        return new AuthResponse
+        {
+            IsSuccess = true,
+            Token = token,
+            RefreshToken = refreshToken.Token
+        };
     }
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
     {
-        var user = await _userManager.FindByNameAsync(request.Email);
+        var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
         {
             return new AuthResponse { IsSuccess = false, Errors = ["Email or Password is incorrect"] };
         }
+        
+        var token = await GenerateJwtToken(user);
+        var refreshToken = await _refreshTokenService.CreateAsync(user.Id);
 
-        var token =await GenerateJwtToken(user);
-        return new AuthResponse { IsSuccess = true, Token = token };
+        return new AuthResponse
+        {
+            IsSuccess = true,
+            Token = token,
+            RefreshToken = refreshToken.Token
+        };
     }
 
     public async Task<string> GenerateJwtToken(ApplicationUser user)
@@ -70,7 +84,42 @@ public class AuthService(UserManager<ApplicationUser> userManager, JwtSettings j
             signingCredentials: creds);
 
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        if (_jwtSettings.Key.Length != 32)
+            throw new InvalidOperationException("Encryption key must be 32 characters long.");
+
         var encryptedToken = AesEncryptionHelper.Encrypt(tokenString, _jwtSettings.Key);
         return encryptedToken;
+    }
+
+    public async Task<AuthResponse> RefreshTokenAsync(string refreshToken)
+    {
+        var storedToken = await _refreshTokenService.GetByTokenAsync(refreshToken);
+
+        if (storedToken == null || storedToken.IsRevoked || storedToken.Expiration < DateTime.UtcNow)
+        {
+            return new AuthResponse { IsSuccess = false, Errors = ["Refresh token is invalid or expired."] };
+        }
+
+        var user = await _userManager.FindByIdAsync(storedToken.UserId);
+        if (user == null)
+        {
+            return new AuthResponse { IsSuccess = false, Errors = ["User not found."] };
+        }
+
+        // Revoke old refresh token
+        await _refreshTokenService.RevokeAsync(storedToken.Token);
+
+        // Generate new JWT
+        var jwtToken = await GenerateJwtToken(user);
+
+        // Generate new RefreshToken
+        var newRefreshToken = await _refreshTokenService.CreateAsync(user.Id);
+
+        return new AuthResponse
+        {
+            IsSuccess = true,
+            Token = jwtToken,
+            RefreshToken = newRefreshToken.Token
+        };
     }
 }

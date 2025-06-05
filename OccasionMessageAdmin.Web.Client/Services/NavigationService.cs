@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using OccasionMessageAdmin.Shared.Services;
+using OccasionMessageAdmin.Shared.Interfaces;
 
 namespace OccasionMessageAdmin.Web.Client.Services;
 

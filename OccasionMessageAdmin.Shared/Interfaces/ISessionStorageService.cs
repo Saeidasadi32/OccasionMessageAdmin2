@@ -1,4 +1,4 @@
-﻿namespace OccasionMessageAdmin.Shared.Services;
+﻿namespace OccasionMessageAdmin.Shared.Interfaces;
 
 public interface ISessionStorageService
 {

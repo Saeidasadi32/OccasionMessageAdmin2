@@ -1,6 +1,6 @@
-﻿using OccasionMessageAdmin.Shared.Services;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 using System.Text.Json;
+using OccasionMessageAdmin.Shared.Interfaces;
 
 namespace OccasionMessageAdmin.Web.Client.Services;
 public class WebAssemblySessionStorageService(IJSRuntime jsRuntime) : ISessionStorageService

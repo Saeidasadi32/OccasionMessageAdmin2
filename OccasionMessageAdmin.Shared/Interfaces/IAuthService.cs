@@ -1,6 +1,6 @@
 ﻿using OccasionMessageAdmin.Shared.Models.Auth;
 
-namespace OccasionMessageAdmin.Shared.Services;
+namespace OccasionMessageAdmin.Shared.Interfaces;
 
 public interface IAuthService
 {

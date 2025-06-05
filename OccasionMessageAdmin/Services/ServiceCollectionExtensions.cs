@@ -1,6 +1,6 @@
 ﻿
 using FamilyBook.Services;
-using OccasionMessageAdmin.Shared.Services;
+using OccasionMessageAdmin.Shared.Interfaces;
 
 namespace OccasionMessageAdmin.Services;
 

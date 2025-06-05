@@ -1,5 +1,5 @@
-﻿using OccasionMessageAdmin.Shared.Models.Auth;
-using OccasionMessageAdmin.Shared.Services;
+﻿using OccasionMessageAdmin.Shared.Interfaces;
+using OccasionMessageAdmin.Shared.Models.Auth;
 using System.Net.Http.Json;
 
 namespace OccasionMessageAdmin.Web.Client.Services;
